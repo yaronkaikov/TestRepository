@@ -17,7 +17,7 @@ pipeline {
             script {
             echo 'Deploying to app server'
               try {
-                  sh "rsync -avz ${env.WORKSPACE}/app/* ${env.APP_SERVER_USER}@${env.APP_SERVER_ADDRESS}:/app"
+                  sh "scp ${env.WORKSPACE}/app/* ${env.APP_SERVER_USER}@${env.APP_SERVER_ADDRESS}:/app"
                   currentBuild.result = 'SUCCESS'
                 } catch (Exception e) {
                     echo 'Exception occurred: ' + e.toString()
