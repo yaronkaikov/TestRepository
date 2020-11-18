@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
-import mysql.connector
 import datetime
+from random import randint
+
+import mysql.connector
+
 from config import DB_HOST, DB_NAME, DB_USER, DB_PASS
 
 sqlConnection = mysql.connector.connect(
@@ -58,3 +61,13 @@ def select_commit():
 
     my_cursor.execute("SELECT * FROM commits ORDER BY commit_time DESC LIMIT 1")
     print(my_cursor.fetchone())
+
+
+if __name__ == "__main__":
+    insert_commit(
+        commit_id="53746d605c3cf3f0a929bdafbe269d7d1932f2f6",
+        commit_message=f"This is a test msg {randint(0, 999999)}",
+        commit_user="Test User",
+    )
+
+    select_commit()
