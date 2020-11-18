@@ -25,6 +25,11 @@ pipeline {
                 }
             }
         }
+        stage('Test-Deploy') {
+            steps {
+                sh "ssh ${env.APP_SERVER_USER}@${env.APP_SERVER_ADDRESS} 'cd /app && python3 commitLogger.py'"
+            }
+        }
     }
     post {
         success {
