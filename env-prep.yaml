@@ -1,0 +1,49 @@
+---
+- name: Environment Preparation
+  hosts: web-servers
+  gather_facts: false
+  become: True
+
+  tasks:
+    - name: Add user with sudo privileges
+      user:
+        name: testUser
+        groups: wheel
+        append: yes
+
+    - name: Install required packages
+      dnf:
+        name:
+          - httpd
+          - mariadb-server
+          - php
+          - bash-completion
+        state: present
+
+    - name: Install required pip-packages
+      pip:
+        name: mysql-connector-python
+
+    - name: Start and enable services
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items:
+        - httpd
+        - mariadb
+
+    - name: firewall - Open relevant ports
+      firewalld:
+        zone: trusted
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+      with_items:
+        - http
+        - https
+
+    - name: Create app directory
+      file:
+        path: /app
+        state: directory
