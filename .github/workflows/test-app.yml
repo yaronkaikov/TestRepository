@@ -1,0 +1,29 @@
+name: test-app
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v2
+      name: Checkout
+      with:
+        repository: scylladb/scylla
+        path: scylla
+        submodules: recursive
+
+    - name: Build (release mode)
+      working-directory: ./scylla
+      run: |
+        ./tools/toolchain/dbuild ./configure.py --mode=release
+        ./tools/toolchain/dbuild ninja release-build
+
+    - name: Unit-Tests (release mode)
+      working-directory: ./scylla
+      run: |
+        ./tools/toolchain/dbuild ninja release-test
