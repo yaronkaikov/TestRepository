@@ -1,4 +1,4 @@
-name: test-app
+name: Test-App
 
 on:
   pull_request:
@@ -11,11 +11,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      name: Checkout
+      name: Checkout scylla
       with:
         repository: scylladb/scylla
         path: scylla
         submodules: recursive
+
+    - uses: actions/checkout@v2
+      name: Checkout scylla-dtest
+      with:
+        repository: scylladb/scylla-dtest
+        token: ${{ secrets.GB_TEMP }}
+        path: scylla-dtest
 
     - name: Build (release mode)
       working-directory: ./scylla
@@ -27,3 +34,8 @@ jobs:
       working-directory: ./scylla
       run: |
         ./tools/toolchain/dbuild ninja release-test
+
+    - name: Smoke-Tests
+      working-directory: scylla-dtest
+      run: |
+        CASSANDRA_DIR=../scylla ./scripts/run_test.sh -m dtest_smoke
